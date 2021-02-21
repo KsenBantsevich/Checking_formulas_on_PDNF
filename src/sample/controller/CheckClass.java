@@ -11,10 +11,10 @@ import java.util.StringTokenizer;
 
 public class CheckClass {
 
-    private static final String allSymbols = "()&|!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static int zero = 0;
-    private static int one = 1;
-    private static int two =2;
+    private static final String allSymbols = ".→~->()&|!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final int zero = 0;
+    private static final int one = 1;
+    private static final int two =2;
 
     public static int checkFormula(String formula) {
 
@@ -23,8 +23,9 @@ public class CheckClass {
         }
 
         for (int i = 0; i < formula.length(); i++) {
-            if (allSymbols.indexOf(formula.charAt(i)) == -1) //некорретные символы
-                return two;
+            if (allSymbols.indexOf(formula.charAt(i)) == -1){ //некорретные символы
+                return two;}
+
         }
 
         int counter = 0;
@@ -35,9 +36,11 @@ public class CheckClass {
                 counter--;
             if (counter < 0)
                 return two;
+
         }
         if (counter != 0)
             return two;
+
 
         String[] terms = breakTerms(formula, "|");  //делим на слагаемые
         String[] terms2 = new String[terms.length];  //избавляемся от скобок
@@ -57,7 +60,8 @@ public class CheckClass {
         for (int i = 0; i < terms2.length; i++) {
             for (int j = i + 1; j < terms2.length; j++) {
                 if (terms[i].equals(terms[j])) //проверяем,есть ли одинаковые слагаемые
-                    return one;
+                  return one;
+
             }
         }
 
@@ -65,6 +69,7 @@ public class CheckClass {
             for (int i = 0; i < term.length() - 1; i++) {
                 if (term.charAt(i) == term.charAt(i + 1)) //повторение знаков, например,(AA&B)
                    return two;
+
             }
 
         String[] multiplierTerms;
@@ -79,20 +84,22 @@ public class CheckClass {
                 multiplierCount = multiplierTerms.length;
             else if (multiplierCount != multiplierTerms.length) { //сравниваем кол-во множителей у слагаемых
                 //System.out.println("count multiplierTerms not equals");
-                return two;
+                 return two;
+
             }
 
             for (int i = 0; i < multiplierTerms.length; i++) {
                 int lastIndex1 = multiplierTerms[i].length();
                 if (lastIndex1 > 2) {//если кол-во знаков у множителя > 2
                     //System.out.println("count >2");
-                    return two;
+
+                    return one;
                 }
                 for (int j = i + 1; j < multiplierTerms.length; j++) {
                     int lastIndex2 = multiplierTerms[j].length();
                     //если в множителе некоторые символы ==, то это не сднф(A&(B&A))
                     if (multiplierTerms[i].charAt(lastIndex1 - 1) == multiplierTerms[j].charAt(lastIndex2 - 1)) {
-                        //System.out.println("double symbol");
+                        System.out.println("double symbol");
                         return one;
                     }
                 }
@@ -129,8 +136,10 @@ public class CheckClass {
                             countOpenBrackets--;
                             countCloseBrackets--;
                         } else
-                            return two;}
+
+                    return two;}
                 catch(Exception e){
+
                     return two;
                 }
             }
@@ -140,11 +149,13 @@ public class CheckClass {
                         countCloseBrackets != multiplierCount - 1) {
                     //System.out.println("bracket dont eqv counts");
                     return two;
+
                 }
             } else if (countCloseBrackets != (multiplierCount - 1 + 1) ||
                        countOpenBrackets != multiplierCount - 1) {
                 ///System.out.println("bracket dont eqv counts");
                       return two;
+
             }
         }
                          return zero;

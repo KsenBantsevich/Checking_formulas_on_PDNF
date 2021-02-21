@@ -14,7 +14,7 @@
     <Pane prefHeight="700.0" prefWidth="600.0">
 
         <Label layoutX="10.0" layoutY="25.0" text="Введите формулу для проверки:"/>
-        <TextField fx:id="formula" layoutX="200.0" layoutY="20.0" text="(A*B)"/>
+        <TextField fx:id="formula" layoutX="200.0" layoutY="20.0" text="(A(B))"/>
 
         <Label layoutX="80.0" layoutY="60.0" style="-fx-font-weight: bold" text="Является ли введенная формула СДНФ?"/>
         <Label layoutX="130.0" layoutY="75.0" style="-fx-font-weight: bold" text="Сделайте свой выбор."/>
