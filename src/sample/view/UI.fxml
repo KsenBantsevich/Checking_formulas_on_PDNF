@@ -1,0 +1,22 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<GridPane fx:controller="sample.controller.ControllerOfUIWindow"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <Pane prefHeight="700.0" prefWidth="600.0">
+
+        <Label layoutX="10.0" layoutY="25.0" text="Введите формулу для проверки:"/>
+        <TextField fx:id="formula" layoutX="200.0" layoutY="20.0" text="(A*B)"/>
+
+        <Label layoutX="80.0" layoutY="60.0" style="-fx-font-weight: bold" text="Является ли введенная формула СДНФ?"/>
+        <Label layoutX="130.0" layoutY="75.0" style="-fx-font-weight: bold" text="Сделайте свой выбор."/>
+
+
+        <RadioButton fx:id="yesAnswer" layoutX="30" layoutY="110" style="-fx-font-style: italic" text="Является"/>
+        <RadioButton fx:id="noAnswer" layoutX="30" layoutY="130" style="-fx-font-style: italic" text="Не является"/>
+
+        <Button fx:id="choice" layoutX="280.0" layoutY="150.0" mnemonicParsing="false" text="Проверить"/>
+
+    </Pane>
+
+</GridPane>
