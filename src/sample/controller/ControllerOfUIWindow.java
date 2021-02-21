@@ -1,14 +1,16 @@
+//////////////////////////////////////////////////////////////////////////////////////
+// Лабораторная работа №1 по дисциплине ЛОИС
+// Выполнена студенткой группы 821703 БГУИР Банцевич Ксенией Андреевной
+// Controller of user interface
+// 19.01.2021 v1.0
+//
 package sample.controller;
 
 import javafx.fxml.FXML;
-
-
 import javafx.scene.control.*;
 
 public class ControllerOfUIWindow {
     
-    sample.controller.CheckClass check;
-
     @FXML
     private TextField formula;
 
@@ -36,22 +38,30 @@ public class ControllerOfUIWindow {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Results");
 
-                boolean answer = check.checkFormula(formula.getText());
+                int answer = CheckClass.checkFormula(formula.getText());
 
                 RadioButton selection = (RadioButton) group.getSelectedToggle();
-
-                if((yes.equals(selection.getText())&&answer)||(no.equals(selection.getText())&&!answer)){
-                    alert.setContentText("Ваш ответ правильный!");
-                }
-                else {
-                    alert.setContentText("Ваш ответ неправильный!");
-                }
-
-                if (answer){
+                if (answer==0){
                     alert.setHeaderText("Формула является СДНФ");
                 }
-                else {
+
+                if(answer==1) {
                     alert.setHeaderText("Формула не является СДНФ");
+                }
+                if(answer==2){
+                    alert.setHeaderText("Будьте внимательнее");
+                    alert.setContentText("Вы ввели некорректную строку!");
+                }
+                else {
+                    try {
+                        if ((yes.equals(selection.getText()) && answer == 0) || (no.equals(selection.getText()) && answer == 1)) {
+                            alert.setContentText("Ваш ответ правильный!");
+                        } else {
+                            alert.setContentText("Ваш ответ неправильный!");
+                        }
+                    } catch (Exception e) {
+                        alert.setContentText("Вы не выбрали ответ!");
+                    }
                 }
                 alert.showAndWait();
 
@@ -59,9 +69,6 @@ public class ControllerOfUIWindow {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         });
-
     }
 }
-
