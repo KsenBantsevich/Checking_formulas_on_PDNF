@@ -11,7 +11,8 @@ import java.util.StringTokenizer;
 
 public class CheckClass {
 
-    private static final String allSymbols = ".→~->()&|!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String allSymbols = "()&|!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     private static final int zero = 0;
     private static final int one = 1;
     private static final int two =2;
@@ -22,9 +23,10 @@ public class CheckClass {
             return two;
         }
 
+
         for (int i = 0; i < formula.length(); i++) {
             if (allSymbols.indexOf(formula.charAt(i)) == -1){ //некорретные символы
-                return two;}
+                return one;}
 
         }
 
@@ -145,12 +147,16 @@ public class CheckClass {
             }
 
             if (i == 0) {
+                if (terms.length == 1 && breakTerms(terms[i], "&").length == 1) {
+                    if (countOpenBrackets != multiplierCount || countCloseBrackets != multiplierCount)
+                        return two;
+                } else{
                 if (countOpenBrackets != (multiplierCount - 1 + countTerms - 1) ||
                         countCloseBrackets != multiplierCount - 1) {
                     //System.out.println("bracket dont eqv counts");
                     return two;
 
-                }
+                }}
             } else if (countCloseBrackets != (multiplierCount - 1 + 1) ||
                        countOpenBrackets != multiplierCount - 1) {
                 ///System.out.println("bracket dont eqv counts");
