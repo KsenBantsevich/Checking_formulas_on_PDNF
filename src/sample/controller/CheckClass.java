@@ -2,16 +2,20 @@
 // Лабораторная работа №1 по дисциплине ЛОИС
 // Выполнена студенткой группы 821703 БГУИР Банцевич Ксенией Андреевной
 // Algorithm for checking a formula on SDNF
-// 20.01.2021 v1.0
+// 15.03.2021 v2.0
 //
 package sample.controller;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
 
 public class CheckClass {
 
-    private static final String allSymbols = "()&|!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String allSymbols = "()/\\!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String conjunction = "/\\";
+    private static final String disjunction = "\\/";
+    private static final String brackets = "()";
 
     private static final int zero = 0;
     private static final int one = 1;
@@ -19,16 +23,18 @@ public class CheckClass {
 
     public static int checkFormula(String formula) {
 
-        if (formula == null || formula.length() == (1) | formula.equals("")) {
+        if (formula == null || formula.equals("")) {
+
             return two;
         }
 
-
         for (int i = 0; i < formula.length(); i++) {
-            if (allSymbols.indexOf(formula.charAt(i)) == -1){ //некорретные символы
-                return one;}
+            if (allSymbols.indexOf(formula.charAt(i)) == -1) { //некорретные символы
 
+                return one;
+            }
         }
+
 
         int counter = 0;
         for (int i = 0; i < formula.length(); i++) { //проверяем на правильную последовательность скобок
@@ -44,14 +50,14 @@ public class CheckClass {
             return two;
 
 
-        String[] terms = breakTerms(formula, "|");  //делим на слагаемые
+        String[] terms = breakTerms(formula,disjunction);  //делим на слагаемые
         String[] terms2 = new String[terms.length];  //избавляемся от скобок
 
         int k = 0;
         for (String term : terms) {
             StringBuilder stringBuilder = new StringBuilder();
             for (int i = 0; i < term.length(); i++) {
-                if (term.charAt(i) != '(' && term.charAt(i) != ')')
+                if (brackets.indexOf(term.charAt(i)) == -1)
                     stringBuilder.append(term.charAt(i));
             }
             terms2[k] = stringBuilder.toString();
@@ -74,33 +80,51 @@ public class CheckClass {
 
             }
 
-        String[] multiplierTerms;
+        String[] multipliers;
+        String[] firstMultipliers = new String[0];
         int multiplierCount = 0;
 
         for (String term : terms2) {
-            multiplierTerms = breakTerms(term, "&"); //делим слагаемое на отдельные "формулы"
-            //System.out.println(Arrays.toString(multiplierTerms));
+            multipliers = breakTerms(term,conjunction); //делим слагаемое на отдельные "формулы"
 
 
-            if (multiplierCount == 0)
-                multiplierCount = multiplierTerms.length;
-            else if (multiplierCount != multiplierTerms.length) { //сравниваем кол-во множителей у слагаемых
-                //System.out.println("count multiplierTerms not equals");
-                 return two;
 
+            if (multiplierCount == 0) {
+                multiplierCount = multipliers.length;
+                firstMultipliers = multipliers;
+            } else {
+                if (multiplierCount != multipliers.length) { //сравниваем кол-во множителей у слагаемых
+
+                    return two;
+                }
+
+                for (int i = 0; i < multiplierCount; i++) {
+                    int count = 0;
+                    int start = 0;
+                    for (int j = 0; j < multiplierCount; j++) {
+
+                        while (firstMultipliers[i].indexOf(multipliers[j].charAt(multipliers[j].length() - 1), start) != -1) {
+                            count++;
+                            start = firstMultipliers[i].indexOf(multipliers[j].charAt(multipliers[j].length() - 1), start) + 1;
+                        }
+
+                    }
+                    if (count != 1)
+                        return one;
+                }
             }
 
-            for (int i = 0; i < multiplierTerms.length; i++) {
-                int lastIndex1 = multiplierTerms[i].length();
+            for (int i = 0; i < multipliers.length; i++) {
+                int lastIndex1 = multipliers[i].length();
                 if (lastIndex1 > 2) {//если кол-во знаков у множителя > 2
                     //System.out.println("count >2");
 
                     return one;
                 }
-                for (int j = i + 1; j < multiplierTerms.length; j++) {
-                    int lastIndex2 = multiplierTerms[j].length();
+                for (int j = i + 1; j < multipliers.length; j++) {
+                    int lastIndex2 = multipliers[j].length();
                     //если в множителе некоторые символы ==, то это не сднф(A&(B&A))
-                    if (multiplierTerms[i].charAt(lastIndex1 - 1) == multiplierTerms[j].charAt(lastIndex2 - 1)) {
+                    if (multipliers[i].charAt(lastIndex1 - 1) == multipliers[j].charAt(lastIndex2 - 1)) {
                         System.out.println("double symbol");
                         return one;
                     }
@@ -112,13 +136,23 @@ public class CheckClass {
     }
 
     private static String[] breakTerms(String formula, String term) {
-        StringTokenizer stringTokenizer = new StringTokenizer(formula, term);
-        int tokensCount = stringTokenizer.countTokens();
-        String[] result = new String[tokensCount];
-        for (int i = 0; i < tokensCount; i++) {
-            result[i] = stringTokenizer.nextToken();
+        int end;
+        ArrayList<String> result = new ArrayList<>();
+
+        int start = 0;
+        while (true) {
+            if (formula.indexOf(term, start) == -1) {
+                result.add(formula.substring(start));
+                break;
+            }
+
+            end = formula.indexOf(term, start);
+            result.add(formula.substring(start, end));
+            start = end + 2;
         }
-        return result;
+
+
+        return result.toArray(new String[0]);
     }
 
     private static int isCorrectBrackets(String[] terms, int multiplierCount) {
@@ -147,24 +181,21 @@ public class CheckClass {
             }
 
             if (i == 0) {
-                if (terms.length == 1 && breakTerms(terms[i], "&").length == 1) {
-                    if (countOpenBrackets != multiplierCount || countCloseBrackets != multiplierCount)
-                        return two;
-                } else{
-                if (countOpenBrackets != (multiplierCount - 1 + countTerms - 1) ||
+                if (terms.length == 1 && breakTerms(terms[i], conjunction).length == 1) {
+                    if (countOpenBrackets != 0 || countCloseBrackets != 0)
+                        return one;
+                } else if (countOpenBrackets != (multiplierCount - 1 + countTerms - 1) ||
                         countCloseBrackets != multiplierCount - 1) {
-                    //System.out.println("bracket dont eqv counts");
+
                     return two;
-
-                }}
+                }
             } else if (countCloseBrackets != (multiplierCount - 1 + 1) ||
-                       countOpenBrackets != multiplierCount - 1) {
-                ///System.out.println("bracket dont eqv counts");
-                      return two;
+                    countOpenBrackets != multiplierCount - 1) {
 
+                return two;
             }
         }
-                         return zero;
+        return zero;
     }
 
 }
