@@ -52,7 +52,7 @@ public class CheckClass {
         }
 
         for (String term : terms2)
-            for (int i = 0; i < term.length() - 1; i++) { //повторение знаков, например,(AA&B)
+            for (int i = 0; i < term.length() - 1; i++) { //повторение знаков, например,(A&&B)
                 if (term.charAt(i) == term.charAt(i + 1)) //если за следующим знаком идет такой же то возращаем false
                    return two;
 
@@ -69,6 +69,7 @@ public class CheckClass {
             if (multiplierCount == 0) {
                 multiplierCount = multipliers.length;
                 firstMultipliers = multipliers;
+                lastTerms.add(multipliers);
             } else {
                 if (multiplierCount != multipliers.length) { //сравниваем кол-во множителей у слагаемых
 
@@ -76,7 +77,7 @@ public class CheckClass {
                 }
                 if (equalTerms(lastTerms, multipliers)) {
 
-                    return two;
+                    return one;
                 }
 
                 lastTerms.add(multipliers);
@@ -214,7 +215,7 @@ public class CheckClass {
             if (i == 0) {
                 if (terms.length == 1 && breakTerms(terms[i], conjunction).length == 1) {
                     if (countOpenBrackets != 0 || countCloseBrackets != 0)
-                        return one;
+                        return two;
                 } else if (countOpenBrackets != (multiplierCount - 1 + countTerms - 1) ||
                         countCloseBrackets != multiplierCount - 1) {
 
