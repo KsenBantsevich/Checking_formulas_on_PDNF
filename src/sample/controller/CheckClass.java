@@ -11,13 +11,14 @@ public class CheckClass {
 
     private static final String grammarRules = "()/\\!ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String conjunction = "/\\";
-    private static final String disjunction = "\\/";
-    private static final String brackets = "()";
 
     private static final int zero = 0;
     private static final int one = 1;
     private static final int two =2;
+
+    private static final String conjunction = "/\\";
+    private static final String disjunction = "\\/";
+    private static final String brackets = "()";
 
     public static int checkFormula(String formula) {
 
@@ -37,7 +38,7 @@ public class CheckClass {
             return two;
         }
 
-        String[] terms = breakTerms(formula,disjunction);  //делим на слагаемые
+        String[] terms = divideExpression(formula,disjunction);  //делим на слагаемые
         String[] terms2 = new String[terms.length];  //избавляемся от скобок
 
         int k = 0;
@@ -64,7 +65,7 @@ public class CheckClass {
         int multiplierCount = 0;
 
         for (String term : terms2) {
-            multipliers = breakTerms(term,conjunction); //делим слагаемое на отдельные "формулы"
+            multipliers = divideExpression(term,conjunction); //делим слагаемое на отдельные "формулы"
 
             if (multiplierCount == 0) {
                 multiplierCount = multipliers.length;
@@ -75,7 +76,7 @@ public class CheckClass {
 
                     return one;
                 }
-                if (equalTerms(lastTerms, multipliers)) {
+                if (equalExpression(lastTerms, multipliers)) {
 
                     return one;
                 }
@@ -150,7 +151,7 @@ public class CheckClass {
         return true;
     }
 
-    private static boolean equalTerms(ArrayList<String[]> terms, String[] term2) {
+    private static boolean equalExpression(ArrayList<String[]> terms, String[] term2) {
         for (String[] term1 : terms) {
             boolean result = true;
             for (String multiplier : term1) {
@@ -167,7 +168,7 @@ public class CheckClass {
         return false;
     }
 
-    private static String[] breakTerms(String formula, String term) {
+    private static String[] divideExpression(String formula, String term) {
         int end;
         ArrayList<String> result = new ArrayList<>();
 
@@ -213,7 +214,7 @@ public class CheckClass {
             }
 
             if (i == 0) {
-                if (terms.length == 1 && breakTerms(terms[i], conjunction).length == 1) {
+                if (terms.length == 1 && divideExpression(terms[i], conjunction).length == 1) {
                     if (countOpenBrackets != 0 || countCloseBrackets != 0)
                         return two;
                 } else if (countOpenBrackets != (multiplierCount - 1 + countTerms - 1) ||
